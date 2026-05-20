@@ -158,7 +158,7 @@ Here is a typical sequence to train a model and predict on a new well:
 % 2. Run fracture_predict.m, select "well_A_logs.xlsx"
 % 3. Output: "well_A_logs_predict.xlsx" with SVM predictions.
 
-## 8. Customising Normalisation
+8. Customising Normalisation
 By default, the prediction scripts set auto_set_std_param = true, which computes the mean and standard deviation of each log from the input file itself. To use fixed normalisation parameters (e.g., from a representative well), set auto_set_std_param = false and provide std_param as a vector:
 matlab
 % For 4‑log models (AC, CAL, CN, DEN) – order: AC_AVG, AC_STD, CAL_AVG, CAL_STD, CN_AVG, CN_STD, DEN_AVG, DEN_STD
@@ -167,13 +167,13 @@ std_param = [335.9975, 15.68873, 25.47676, 1.819065, 22.52, 6.678, 2.438, 0.208]
 % For 3‑log models (AC, CAL, SP)
 std_param = [335.9975, 15.68873, 25.47676, 1.819065, 80.10648, 8.057371];
 
-##9. Citation
+9. Citation
 If you use this MATLAB code or the SVM‑based fracture prediction workflow in your research, please cite the original paper:
 
 Xu, S., Wang, R., Fan, Z., Yao, R., Ren, S., Jiang, Y., Dong, Y., Xie, C. (2026). Micro‑Fracture Identification and Prediction with Improved SVM Model: A Case Study of Complex Carbonate and Clastic Rock Reservoirs in the Niuxintuo Area, Liaohe Depression, Bohai Bay Basin. Computers & Geosciences, 214, 106183. https://doi.org/10.1016/j.cageo.2026.106183
 
-##10. Acknowledgements
+10. Acknowledgements
 The authors thank the Research Institute of Petroleum Exploration and Development, Liaohe Oilfield Company, for providing core and well‑log data. This work was supported by the National Natural Science Foundation of China (Grant No. 42202121).
 
-##11. License
+11. License
 This code is distributed under the No License.
