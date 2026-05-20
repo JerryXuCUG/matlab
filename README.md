@@ -66,3 +66,38 @@ end
 
 Expected output: accuracy > 0.85 (typically 0.90–0.95). This confirms that your MATLAB installation has the Statistics and Machine Learning Toolbox and that the basic SVM workflow functions correctly.
 
+## 3 .Repository Structure
+.
+├── training_scripts/               # SVM training for different lithologies
+│   ├── SVM_train.m                 # 4‑log model (mudstone)
+│   ├── SVM_train2.m                # 3‑log model (mudstone)
+│   ├── SVM_Xsandtrain.m            # 4‑log (fine sandstone)
+│   ├── SVM_Xsandtrain2.m           # 3‑log (fine sandstone)
+│   ├── SVM_ZCsandtrain.m           # 4‑log (medium‑coarse sandstone)
+│   ├── SVM_ZCsandtrain2.m          # 3‑log (medium‑coarse sandstone)
+│   ├── SVM_Fsandtrain.m            # 4‑log (siltstone)
+│   ├── SVM_Fsandtrain2.m           # 3‑log (siltstone)
+│   ├── SVM_SLsandtrain.m           # 4‑log (glutenite)
+│   ├── SVM_SLsandtrain2.m          # 3‑log (glutenite)
+│   ├── SVM_mud3train.m             # 4‑log (mudstone, extended)
+│   ├── SVM_mud4train2.m            # 3‑log (mudstone, extended)
+│   ├── SVM_baiyunyan3train.m       # 4‑log (dolomite)
+│   ├── SVM_baiyunyan4train2.m      # 3‑log (dolomite)
+│   ├── SVM_Bmudtrain.m             # 4‑log (dolomitic mudstone)
+│   ├── SVM_Bmudtrain2.m            # 3‑log (dolomitic mudstone)
+│   ├── SVM_NZbaiyunyantrain.m      # 4‑log (argillaceous dolomite)
+│   ├── SVM_NZbaiyunyantrain2.m     # 3‑log (argillaceous dolomite)
+│   └── ... (other lithology variants)
+├── prediction_scripts/
+│   ├── fracture_predict.m          # Predict using 4‑log models (AC,CAL,CN,DEN)
+│   ├── fracture_predict2.m         # Predict using 3‑log models (AC,CAL,SP)
+│   ├── fracture_predict3.m         # Advanced: 8 lithology classes, 4‑log
+│   └── fracture_predict4.m         # Advanced: 8 lithology classes, 3‑log (with fixed normalisation)
+├── utils/
+│   ├── Data_Std.m                  # Z‑score normalisation example
+│   └── Bayes_Classification.m      (alternative Bayesian classifier – not used in final paper)
+├── sample_data/                    (not included, see Section 2)
+│   ├── sample_input.xlsx
+│   ├── sample_norm_params.xlsx
+│   └── ...
+└── README.md
