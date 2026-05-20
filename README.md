@@ -7,7 +7,7 @@ The code implements a complete workflow for predicting natural fractures using c
 
 The workflow includes well‑by‑well Z‑score normalisation, Bayesian optimisation of SVM hyperparameters (box constraint and kernel scale), 5‑fold cross‑validation, SMOTE‑like balancing (via data preparation), and outputs fracture probability logs with >85% accuracy.
 
-##1. System Requirements
+## 1. System Requirements
 - MATLAB R2019b or later (tested on R2021b)
 - Statistics and Machine Learning Toolbox (for `fitcsvm`, `bayesopt`, `cvpartition`)
 - Parallel Computing Toolbox (optional, speeds up Bayesian optimisation)
@@ -15,7 +15,7 @@ The workflow includes well‑by‑well Z‑score normalisation, Bayesian optimis
 
 No additional third‑party toolboxes are required.
 
-##2. Repository Structure
+## 2. Repository Structure
 ├── training_scripts/ # SVM training for different lithologies
 │ ├── SVM_train.m # 4‑log model (mudstone)
 │ ├── SVM_train2.m # 3‑log model (mudstone)
