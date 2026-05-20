@@ -66,38 +66,65 @@ end
 
 Expected output: accuracy > 0.85 (typically 0.90–0.95). This confirms that your MATLAB installation has the Statistics and Machine Learning Toolbox and that the basic SVM workflow functions correctly.
 
-## 3 .Repository Structure
+## 3. Repository Structure
 .
-├── training_scripts/               # SVM training for different lithologies
-│   ├── SVM_train.m                 # 4‑log model (mudstone)
-│   ├── SVM_train2.m                # 3‑log model (mudstone)
-│   ├── SVM_Xsandtrain.m            # 4‑log (fine sandstone)
-│   ├── SVM_Xsandtrain2.m           # 3‑log (fine sandstone)
-│   ├── SVM_ZCsandtrain.m           # 4‑log (medium‑coarse sandstone)
-│   ├── SVM_ZCsandtrain2.m          # 3‑log (medium‑coarse sandstone)
-│   ├── SVM_Fsandtrain.m            # 4‑log (siltstone)
-│   ├── SVM_Fsandtrain2.m           # 3‑log (siltstone)
-│   ├── SVM_SLsandtrain.m           # 4‑log (glutenite)
-│   ├── SVM_SLsandtrain2.m          # 3‑log (glutenite)
-│   ├── SVM_mud3train.m             # 4‑log (mudstone, extended)
-│   ├── SVM_mud4train2.m            # 3‑log (mudstone, extended)
-│   ├── SVM_baiyunyan3train.m       # 4‑log (dolomite)
-│   ├── SVM_baiyunyan4train2.m      # 3‑log (dolomite)
-│   ├── SVM_Bmudtrain.m             # 4‑log (dolomitic mudstone)
-│   ├── SVM_Bmudtrain2.m            # 3‑log (dolomitic mudstone)
-│   ├── SVM_NZbaiyunyantrain.m      # 4‑log (argillaceous dolomite)
-│   ├── SVM_NZbaiyunyantrain2.m     # 3‑log (argillaceous dolomite)
-│   └── ... (other lithology variants)
+├── training_scripts/ # SVM training for different lithologies
+│ ├── SVM_train.m # 4‑log model (mudstone)
+│ ├── SVM_train2.m # 3‑log model (mudstone)
+│ ├── SVM_Xsandtrain.m # 4‑log (fine sandstone)
+│ ├── SVM_Xsandtrain2.m # 3‑log (fine sandstone)
+│ ├── SVM_ZCsandtrain.m # 4‑log (medium‑coarse sandstone)
+│ ├── SVM_ZCsandtrain2.m # 3‑log (medium‑coarse sandstone)
+│ ├── SVM_Fsandtrain.m # 4‑log (siltstone)
+│ ├── SVM_Fsandtrain2.m # 3‑log (siltstone)
+│ ├── SVM_SLsandtrain.m # 4‑log (glutenite)
+│ ├── SVM_SLsandtrain2.m # 3‑log (glutenite)
+│ ├── SVM_mud3train.m # 4‑log (mudstone, extended)
+│ ├── SVM_mud4train2.m # 3‑log (mudstone, extended)
+│ ├── SVM_baiyunyan3train.m # 4‑log (dolomite)
+│ ├── SVM_baiyunyan4train2.m # 3‑log (dolomite)
+│ ├── SVM_Bmudtrain.m # 4‑log (dolomitic mudstone)
+│ ├── SVM_Bmudtrain2.m # 3‑log (dolomitic mudstone)
+│ ├── SVM_NZbaiyunyantrain.m # 4‑log (argillaceous dolomite)
+│ ├── SVM_NZbaiyunyantrain2.m # 3‑log (argillaceous dolomite)
+│ └── ... (other lithology variants)
 ├── prediction_scripts/
-│   ├── fracture_predict.m          # Predict using 4‑log models (AC,CAL,CN,DEN)
-│   ├── fracture_predict2.m         # Predict using 3‑log models (AC,CAL,SP)
-│   ├── fracture_predict3.m         # Advanced: 8 lithology classes, 4‑log
-│   └── fracture_predict4.m         # Advanced: 8 lithology classes, 3‑log (with fixed normalisation)
+│ ├── fracture_predict.m # Predict using 4‑log models (AC,CAL,CN,DEN)
+│ ├── fracture_predict2.m # Predict using 3‑log models (AC,CAL,SP)
+│ ├── fracture_predict3.m # Advanced: 8 lithology classes, 4‑log
+│ └── fracture_predict4.m # Advanced: 8 lithology classes, 3‑log (with fixed normalisation)
 ├── utils/
-│   ├── Data_Std.m                  # Z‑score normalisation example
-│   └── Bayes_Classification.m      (alternative Bayesian classifier – not used in final paper)
-├── sample_data/                    (not included, see Section 2)
-│   ├── sample_input.xlsx
-│   ├── sample_norm_params.xlsx
-│   └── ...
+│ ├── Data_Std.m # Z‑score normalisation example
+│ └── Bayes_Classification.m (alternative Bayesian classifier – not used in final paper)
+├── sample_data/ (not included, see Section 4)
+│ ├── mudstone_fracture_samples.xlsx
+│ ├── normalisation_params.xlsx
+│ └── ...
 └── README.md
+
+## 3. Data Preparation
+
+### 3.1 Input files for training
+
+Each training script requires two Excel files:
+
+1. **Sample file** (e.g., `泥岩裂缝样本.xlsx`)  
+   - First row: headers. At least the following columns must exist:  
+     `井号` (well ID), `AC`, `CAL`, `CN`, `DEN` (or `SP` for 3‑log models), and `LABEL` (1 = fracture, 0 = non‑fracture).  
+   - Each subsequent row corresponds to a depth point with known fracture label (from core description).
+
+2. **Normalisation parameters file** (e.g., `归一化参数.xlsx`)  
+   - First row: headers.  
+   - Columns: `井号`, `AC_AVG`, `AC_STD`, `CAL_AVG`, `CAL_STD`, `CN_AVG`, `CN_STD`, `DEN_AVG`, `DEN_STD` (or `SP_AVG`, `SP_STD` for 3‑log).  
+   - Each row provides the mean and standard deviation of each log for that specific well (calculated over the target interval). These are used for well‑by‑well Z‑score normalisation.
+
+### 3.2 Input files for prediction
+
+The prediction scripts (`fracture_predict.m` etc.) ask the user to select an Excel file containing the logs to predict. The file must include:
+
+- A header row with column names.  
+- Columns: `井号` (well ID – can be repeated), `AC`, `CAL`, `CN`, `DEN` (or `SP`), and `岩性` (lithology string).  
+- Supported lithology strings (case‑insensitive partial match):  
+  `砂砾岩`, `中-粗砂岩`, `细砂岩`, `粉砂岩`, `泥岩`, `白云质泥岩`, `白云岩`, `泥质白云岩`.
+
+The prediction script automatically detects which log curves are present and uses the appropriate model (4‑log or 3‑log). It also performs automatic normalisation using the mean and standard deviation of the input logs (or uses a fixed pre‑defined normalisation when `auto_set_std_param = false`).
