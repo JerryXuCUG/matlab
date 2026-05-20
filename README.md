@@ -50,9 +50,54 @@ No additional third‑party toolboxes are required.
 │ └── ...
 └── README.md
 
-##3.3. Data Preparation
+## 3. Quick Test
 
-### 3.1 Input files for training
+To verify that your MATLAB environment and required toolboxes are correctly set up, run the following synthetic test. No external data files are needed.
+
+Save the script below as `quick_test.m` and run it:
+
+```matlab
+% quick_test.m – Synthetic test for SVM fracture prediction workflow
+clear; close all; clc;
+
+fprintf('=== Quick Test: Synthetic Fracture Data ===\n');
+
+% Generate synthetic logs for 200 depth points
+rng(42); % for reproducibility
+n = 200;
+AC  = 300 + 20*randn(n,1);   % μs/m
+CAL = 24  + 2*randn(n,1);    % cm
+CN  = 10  + 5*randn(n,1);    % %
+DEN = 2.5 + 0.1*randn(n,1);  % g/cm³
+
+% Create synthetic labels: fractures (1) when AC>320 & CAL>25 & CN>12 & DEN<2.45
+label = (AC > 320 & CAL > 25 & CN > 12 & DEN < 2.45);
+label = double(label);
+
+% Split into training (70%) and test (30%)
+cv = cvpartition(label, 'HoldOut', 0.3);
+x = [AC, CAL, CN, DEN];
+x_train = x(cv.training,:); y_train = label(cv.training);
+x_test  = x(cv.test,:);     y_test  = label(cv.test);
+
+% Train SVM with RBF kernel (no Bayesian optimisation for quick test)
+SVMModel = fitcsvm(x_train, y_train, 'KernelFunction', 'rbf', ...
+                   'Standardize', true, 'BoxConstraint', 1, 'KernelScale', 'auto');
+
+% Predict and evaluate
+y_pred = predict(SVMModel, x_test);
+acc = sum(y_pred == y_test) / length(y_test);
+
+fprintf('Test accuracy: %.3f\n', acc);
+if acc > 0.85
+    fprintf('=== Quick Test PASSED ===\n');
+else
+    fprintf('=== Quick Test FAILED (low accuracy) ===\n');
+end
+
+##4. Data Preparation
+
+### 4.1 Input files for training
 
 Each training script requires two Excel files:
 
@@ -66,7 +111,7 @@ Each training script requires two Excel files:
    - Columns: `井号`, `AC_AVG`, `AC_STD`, `CAL_AVG`, `CAL_STD`, `CN_AVG`, `CN_STD`, `DEN_AVG`, `DEN_STD` (or `SP_AVG`, `SP_STD` for 3‑log).  
    - Each row provides the mean and standard deviation of each log for that specific well (calculated over the target interval). These are used for well‑by‑well Z‑score normalisation.
 
-### 3.2 Input files for prediction
+### 4.2 Input files for prediction
 
 The prediction scripts (`fracture_predict.m` etc.) ask the user to select an Excel file containing the logs to predict. The file must include:
 
@@ -77,9 +122,9 @@ The prediction scripts (`fracture_predict.m` etc.) ask the user to select an Exc
 
 The prediction script automatically detects which log curves are present and uses the appropriate model (4‑log or 3‑log). It also performs automatic normalisation using the mean and standard deviation of the input logs (or uses a fixed pre‑defined normalisation when `auto_set_std_param = false`).
 
-## 4. Training a New SVM Model
+## 5. Training a New SVM Model
 
-### 4.1 Four‑log model (AC, CAL, DEN, CN)
+### 5.1 Four‑log model (AC, CAL, DEN, CN)
 
 Example for mudstone:
 
@@ -94,17 +139,17 @@ Example for mudstone:
    - Display confusion matrix, accuracy, recall, precision, F1 score on the test set.
    - Generate a plot of predicted vs. true labels.
 
-### 4.2 Three‑log model (AC, CAL, SP)
+### 5.2 Three‑log model (AC, CAL, SP)
 
 Use `SVM_train2.m` and change `target_index = ["AC", "CAL", "SP"]`. The normalisation parameters file must contain `SP_AVG` and `SP_STD`.
 
-### 4.3 For other lithologies
+### 5.3 For other lithologies
 
 Simply duplicate the script, change the Excel file names, and adjust `Model_save_path` and `target_index` accordingly. The repository already contains pre‑trained models for eight lithologies (see `fracture_predict3.m` for the full list).
 
-## 5. Predicting on New Wells
+## 6. Predicting on New Wells
 
-### 5.1 Basic prediction (one model type)
+### 6.1 Basic prediction (one model type)
 
 - **Four‑log prediction**: run `fracture_predict.m`.  
 - **Three‑log prediction**: run `fracture_predict2.m`.
@@ -120,7 +165,7 @@ The script will open a file dialog – select your well log Excel file. It then:
 
 The output file is named `<original>_predict.xlsx`.
 
-### 5.2 Advanced prediction (eight lithology classes)
+### 6.2 Advanced prediction (eight lithology classes)
 
 For the full set of eight lithologies used in the paper, use:
 
@@ -129,7 +174,7 @@ For the full set of eight lithologies used in the paper, use:
 
 These scripts load all eight SVM models and route each depth point to the correct classifier based on the `岩性` column.
 
-## 6. Reproducing the Paper’s Results
+## 7. Reproducing the Paper’s Results
 
 The trained models and anonymised test data are not included in this repository for confidentiality reasons. However, the scripts are fully functional and can be run on your own datasets. To reproduce the performance metrics (Table 4 in the paper):
 
@@ -139,11 +184,11 @@ The trained models and anonymised test data are not included in this repository 
 
 All figures in the paper (crossplots, single‑well logs, confusion charts) can be generated by modifying the training scripts to save the plots. Example plotting code is already included (`figure`, `plot`, `confusionchart`).
 
-## 7. Example Workflow
+## 8. Example Workflow
 
 Here is a typical sequence to train a model and predict on a new well:
 
-## 8. Customising Normalisation
+## 9. Customising Normalisation
 By default, the prediction scripts set auto_set_std_param = true, which computes the mean and standard deviation of each log from the input file itself. To use fixed normalisation parameters (e.g., from a representative well), set auto_set_std_param = false and provide std_param as a vector:
 
 matlab
@@ -153,12 +198,19 @@ std_param = [335.9975, 15.68873, 25.47676, 1.819065, 22.52, 6.678, 2.438, 0.208]
 % For 3‑log models (AC, CAL, SP)
 std_param = [335.9975, 15.68873, 25.47676, 1.819065, 80.10648, 8.057371];
 
-## 9. Citation
+## 10. Citation
 If you use this MATLAB code or the SVM‑based fracture prediction workflow in your research, please cite the original paper:
 
 Xu, S., Wang, R., Fan, Z., Yao, R., Ren, S., Jiang, Y., Dong, Y., Xie, C. (2026). Micro‑Fracture Identification and Prediction with Improved SVM Model: A Case Study of Complex Carbonate and Clastic Rock Reservoirs in the Niuxintuo Area, Liaohe Depression, Bohai Bay Basin. Computers & Geosciences, 214, 106183. https://doi.org/10.1016/j.cageo.2026.106183
 
-## 10. Acknowledgements
+## 11. Acknowledgements
 The authors thank the Research Institute of Petroleum Exploration and Development, Liaohe Oilfield Company, for providing core and well‑log data. This work was supported by the National Natural Science Foundation of China (Grant No. 42202121).
 
-## 11. License
+## 12. License
+Copyright (c) 2026 Shikun Xu, Ren Wang, et al.
+
+All rights reserved.
+
+This source code and associated files are the intellectual property of the authors. No permission is granted to use, copy, modify, merge, publish, distribute, sublicense, or sell copies of this software without explicit written permission from the authors.
+
+For any inquiries regarding licensing, please contact the corresponding author.
