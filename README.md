@@ -95,7 +95,7 @@ else
     fprintf('=== Quick Test FAILED (low accuracy) ===\n');
 end
 
-##4. Data Preparation
+## 4. Data Preparation
 
 ### 4.1 Input files for training
 
